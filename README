@@ -1,0 +1,21 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2004
+
+Are you in the mood for a blue desktop, but don't want to take the time to go through all of your installed color scheme files just to find the ones you want?  Or do you like to make each of your Vim windows a different color to easily identify which editor contains which projects?
+
+If so, this plugin is for you.
+
+This script crawls through the directories in your &runtimepath searching for installed colorscheme files.  When it finds a colorscheme, it adds it to a menu called ColorSchemes where it is sorted by the predominant color used.  Color schemes are also stored alphabetically by name in this menu.  This way, you can have all of your blue themes at your fingertips.  Or if you just remember the name, you can quickly browse to it.
+
+This script works by analysing the guibg option of the Normal highlight group to determine which basic color to file the scheme under.  It will place each theme in one of the following categories: black, blue, cyan, darkgrey, green, grey, offwhite, orange, purple, red, white, yellow, or unknown if no background color is specified.  It uses a heuristic that is still a work in progress, so it doesn't always guess the color correctly.  For that matter, people have a hard time deciding what category a color might fall under, so it may always be a work in progress!
+
+If you install new color schemes, force a re-scan by clicking 'Rebuild Menu' in the ColorSchemes menu.  'Reload Menu' simply forces Vim to re-source an already generated menu file.
+
+A menu entry that appears with an asterisk before it indicates a color scheme that contains more than one "hi Normal" command.  This script assumes that the first such command encountered is the one that will be executed.  Such entries are not guaranteed to be sorted correctly.
+
+Since version 0.6, this script includes an autoload plugin that facilitates tweaking the color selection algorithm.
+This autoload plugin contains a Perl script which generates an HTML page that shows the Normal background color for each installed theme, along with the plugin's guess at which category it should be filed under.  The embedded Perl script calls the very same functions the plugin uses, letting you quickly assess the results of your changes.  The plugin keeps track of the three previous guesses, and highlights the colorschemes that have been affected by your changes.  
+
+More details are found in plugin/ColorSchemeMenuMaker.vim.
+
+If you can make any improvements, I'd love to see them!
+
