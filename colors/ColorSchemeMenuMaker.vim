@@ -1,19 +1,20 @@
 " theme.menu.vim:	Generates Vim themes menu and organizes themes based
 " 					upon background colors
 " Maintainer:		Erik Falor <rAjsBnFCybe@tzNnvy.Zpbz g?? - NOSPAM>
-" Date:				Aug 28, 2007
-" Version:			0.1
+" Date:				Aug 29, 2007
+" Version:			0.2
 "
 
-" Initialization: {{{1
+" Initialization: {{{
 if exists("g:loaded_theme_menu") || &cp
 	finish
 endif
 let g:loaded_theme_menu= "0.1"
 let s:keepcpo      = &cpo
 set cpo&vim
+"}}}
 
-" Script Variables: {{{1
+" Script Variables: {{{
 let s:menuFile = strpart(&rtp, 0, stridx(&rtp, ',')) . '/plugin/ColorSchemes.vim'
 let s:menuName = '&ColorSchemes'
 let s:xdigit = '[0123456789ABCDEFabcdef]'
@@ -23,15 +24,14 @@ let s:hexvals = { 0:0, 1:1, 2:2, 3:3,
 			\'c':12, 'd':13, 'e':14, 'f':15,
 			\'A':10, 'B':11, 'C':12, 'D':13,
 			\'E':14, 'F':15 }
+"}}}
 
-" Library Functions {{{1
-function! <SID>RGBtoHSV(r, g, b) "{{{1
-"	call Dfunc("RGBtoHSV(". a:r. ','. a:g. ','. a:b. ')')
+" Library Functions {{{
+function! <SID>RGBtoHSV(r, g, b) "{{{
 	let h = 0
 	let s = 0
 	let v = 0
 	if (a:b > a:g) && (a:b > a:r)
-"		call Decho("branch 1")
 		let v = a:b
 		if v != 0
 			let min = 0
@@ -42,7 +42,6 @@ function! <SID>RGBtoHSV(r, g, b) "{{{1
 			endif
 
 			let delta = v - min
-"			call Decho("v = ", v, " min = ", min, " delta = ", delta)
 
 			if delta != 0
 				let s = (delta * 255) / v
@@ -59,7 +58,6 @@ function! <SID>RGBtoHSV(r, g, b) "{{{1
 			let h = 0
 		endif
 	elseif a:g > a:r
-"		call Decho("branch 2")
 		let v = a:g
 		if v != 0
 			let min = 0
@@ -69,9 +67,6 @@ function! <SID>RGBtoHSV(r, g, b) "{{{1
 				let min = a:r 
 			endif
 			let delta = v - min
-
-"			call Decho("v = ", v, " min = ", min, " delta = ", delta)
-
 			if delta != 0
 				let s = (delta * 255) / v
 				let h = 120 + (60 * a:b - 60 * a:r) / delta
@@ -87,7 +82,6 @@ function! <SID>RGBtoHSV(r, g, b) "{{{1
 			let h = 0
 		endif
 	else
-"		call Decho("branch 3")
 		let v = a:r
 		if v != 0
 			let min = 0
@@ -112,29 +106,27 @@ function! <SID>RGBtoHSV(r, g, b) "{{{1
 			let h = 0
 		endif
 	endif
-"	call Decho("hsv:(", h, ", ", s, ", ", v, ")")
-"	call Dret("RGBtoHSV")
 	return [h, s, v]
 endfunction "RGBtoHSV()
+"}}}
 
-
-function! <SID>IsBlack(r, g, b, h, s, v) "{{{1
+function! <SID>IsBlack(r, g, b, h, s, v) "{{{
 	if a:r == a:g && a:g == a:b && a:b == 0
 		return 1
 	else
 		return 0
 	endif
-endfunction "IsBlack()
+endfunction "IsBlack()}}}
 	
-function! <SID>IsWhite(r, g, b, h, s, v) "{{{1
+function! <SID>IsWhite(r, g, b, h, s, v) "{{{
 	if a:r == a:g && a:g == a:b && a:b == 255
 		return 1
 	else 
 		return 0
 	endif
-endfunction "IsWhite()
+endfunction "IsWhite()}}}
 
-function! <SID>IsDarkGrey(r, g, b, h, s, v) "{{{1
+function! <SID>IsDarkGrey(r, g, b, h, s, v) "{{{
 	let diffRGB = max([a:r, a:g, a:b]) - min([a:r, a:g, a:b])
 	let darkGreyFuzz = 20
 	if diffRGB <= darkGreyFuzz
@@ -142,9 +134,9 @@ function! <SID>IsDarkGrey(r, g, b, h, s, v) "{{{1
 	else 
 		return 0
 	endif
-endfunction "IsDarkGrey()
+endfunction "IsDarkGrey()}}}
 
-function! <SID>IsOffWhite(r, g, b, h, s, v) "{{{1
+function! <SID>IsOffWhite(r, g, b, h, s, v) "{{{
 	let offWhiteSat = 32
 	let offWhiteVal = 255 - 32
 	if a:v >= offWhiteVal && a:s <= offWhiteSat
@@ -152,9 +144,9 @@ function! <SID>IsOffWhite(r, g, b, h, s, v) "{{{1
 	else 
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsGrey(r, g, b, h, s, v) "{{{1
+function! <SID>IsGrey(r, g, b, h, s, v) "{{{
 	let diffRGB = max([a:r, a:g, a:b]) -  min([a:r, a:g, a:b])
 	let greyFuzz = 28
 	let greyVal = 32
@@ -168,26 +160,25 @@ function! <SID>IsGrey(r, g, b, h, s, v) "{{{1
 	else
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-
-function! <SID>IsYellow(r, g, b, h, s, v) "{{{1
+function! <SID>IsYellow(r, g, b, h, s, v) "{{{
 	if a:h > 30 && a:h <= 90
 		return 1
 	else 
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsGreen(r, g, b, h, s, v) "{{{1
+function! <SID>IsGreen(r, g, b, h, s, v) "{{{
 	if a:h > 90 && a:h <= 180
 		return 1
 	else 
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsCyan(r, g, b, h, s, v) "{{{1
+function! <SID>IsCyan(r, g, b, h, s, v) "{{{
 "	cyan will be 180 deg +/- 10 deg
 	let variance = 10
 	if a:h > 180 - variance && a:h < 180 + variance
@@ -195,25 +186,25 @@ function! <SID>IsCyan(r, g, b, h, s, v) "{{{1
 	else 
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsBlue(r, g, b, h, s, v) "{{{1
+function! <SID>IsBlue(r, g, b, h, s, v) "{{{
 	if a:h > 180 && a:h <= 270
 		return 1
 	else 
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsMagenta(r, g, b, h, s, v) "{{{1
+function! <SID>IsMagenta(r, g, b, h, s, v) "{{{
 	if a:h > 270 && a:h <= 330
 		return 1
 	else 
 		return 0
 	endif
-endfunction
+endfunction }}}
 
-function! <SID>IsOrange(r, g, b, h, s, v) "{{{1
+function! <SID>IsOrange(r, g, b, h, s, v) "{{{
 	"a magic number found through trial and error
 	let greenFuzz = 172 
 	if a:r > a:g && a:b == 0 && a:g < greenFuzz && a:g != 0
@@ -221,17 +212,17 @@ function! <SID>IsOrange(r, g, b, h, s, v) "{{{1
 	else
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>IsRed(r, g, b, h, s, v) "{{{1
+function! <SID>IsRed(r, g, b, h, s, v) "{{{
 	if a:h > 330 || a:h <= 30
 		return 1
 	else
 		return 0
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>RgbTxt2Hexes() "{{{1
+function! <SID>RgbTxt2Hexes() "{{{
 	"read rgb.txt, return dictionary mapping color names to hex triplet
 	let rgbdict = {}
 	for line in readfile(expand("$VIMRUNTIME/rgb.txt"))
@@ -243,9 +234,9 @@ function! <SID>RgbTxt2Hexes() "{{{1
 	"note: vim treats guibg=NONE as guibg=white
 	let rgbdict['none'] = 'FFFFFF'
 	return rgbdict
-endfunction
+endfunction "}}}
 
-function! <SID>RGBHexToHexes(rgb) "{{{1
+function! <SID>RGBHexToHexes(rgb) "{{{
 	let xdigits = '\(' . s:xdigit . '\{2\}\)'
 	let pat = '\(#\)\?' . xdigits . xdigits . xdigits
 	let l = matchlist(a:rgb, pat)
@@ -254,18 +245,18 @@ function! <SID>RGBHexToHexes(rgb) "{{{1
 	else
 		return []
 	endif
-endfunction
+endfunction "}}}
 
-function! <SID>RGBHexToInts(rgbList) "{{{1
+function! <SID>RGBHexToInts(rgbList) "{{{
 	return map(a:rgbList, '<SID>Hex2Int(v:val)')
-endfunction
+endfunction "}}}
 
-function! <SID>Hex2Int(hex) "{{{1
+function! <SID>Hex2Int(hex) "{{{
 	let xdigits = split(a:hex, '\zs')
 	return 16 * s:hexvals[xdigits[0]] + s:hexvals[xdigits[1]]
-endfunction
+endfunction "}}}
 
-function! <SID>RGB2BoyColor(rgb) "{{{1
+function! <SID>RGB2BoyColor(rgb) "{{{
 	let rgbL = <SID>RGBHexToInts(<SID>RGBHexToHexes(a:rgb))
 	let r = rgbL[0] | let g = rgbL[1] | let b = rgbL[2]
 	let hsvL = <SID>RGBtoHSV(r, g, b)
@@ -283,14 +274,14 @@ function! <SID>RGB2BoyColor(rgb) "{{{1
 	if <SID>IsMagenta(r, g, b, h, s, v) == 1 | return 'magenta' | endif
 	if <SID>IsRed(r, g, b, h, s, v) == 1 | return 'red' | endif
 	return 'unknown'
-endfunction
+endfunction "}}}
 
-function! <SID>GlobThemes() "{{{1
+function! <SID>GlobThemes() "{{{
 	"return list containing paths to all theme files in &runtimepath
 	return split(globpath(&rtp, 'colors/*.vim'), '\n')
-endfunction
+endfunction "}}}
 
-function! <SID>ScanThemeBackground() "{{{1
+function! <SID>ScanThemeBackground() "{{{
 	"Read each of the theme files and find out which color
 	"each theme 'basically' is.  Uses the last 'hi Normal' 
 	"group found to classify by color.  Notes those color
@@ -326,18 +317,16 @@ function! <SID>ScanThemeBackground() "{{{1
 			let letter = toupper(strpart(themename, 0, 1))
 			if letter =~ '\d' | let letter = '#' | endif
 
-			"if len(color) < 1
-				"echo "bad color in ". theme
-			"elseif len(letter) < 1
-				"echo "bad letter in ". theme
-			"endif
+			if len(color) < 1
+				let color = 'unknown'
+			endif
 
 			"allocate sub-dict if needed
-			if len(color) > 0 && !has_key(themeColors, color)
+			if !has_key(themeColors, color)
 				let themeColors[color] = {}
 			endif
 			"allocate sub-dict if needed
-			if len(letter) > 0 && !has_key(themeNames, letter)
+			if !has_key(themeNames, letter)
 				let themeNames[letter] = {}
 			endif
 			if higroupfound > 1
@@ -355,30 +344,44 @@ function! <SID>ScanThemeBackground() "{{{1
 		endif
 	endfor
 	return [themeColors, themeNames]
-endfunction
+endfunction "}}}
 
-function! <SID>BuildMenu(dicts) "{{{1
+function! <SID>BuildMenu(dicts) "{{{
 	"puts menu commands into a list
 	let menu = []
 	call add(menu, '"ColorScheme menu generated ' . strftime("%c", localtime()))
 	call add(menu, '')
 	call add(menu, '"Themes by color:')
 	call add(menu, '')
+	"count number of themes categorized by color
+	let totThemes = 0
+	for i in keys(a:dicts[0])
+		let totThemes += len(a:dicts[0][i])
+	endfor
 	for color in sort(keys(a:dicts[0]))
+		let numThemes = len(a:dicts[0][color])
 		call add(menu, '')
 		call add(menu, '"submenu '. color)
 		for theme in sort(keys(a:dicts[0][color]))
-			call add(menu, '9000amenu '. s:menuName. '.&Colors.' . color . '.'
+			call add(menu, '9000amenu '. s:menuName. '.&Colors\ ('. totThemes . ').'
+					\. color . '\ ('. numThemes . ').'
 					\. a:dicts[0][color][theme]. '  :colo '. theme . '<CR>')
 		endfor
 	endfor
 	call add(menu, '"Themes by name:')
 	call add(menu, '')
+	"count number of themes categorized by name
+	let totThemes = 0
+	for i in keys(a:dicts[1])
+		let totThemes += len(a:dicts[1][i])
+	endfor
 	for letter in sort(keys(a:dicts[1]))
+		let numThemes = len(a:dicts[1][letter])
 		call add(menu, '')
 		call add(menu, '"submenu '. letter)
 		for theme in sort(keys(a:dicts[1][letter]))
-			call add(menu, 'amenu '. s:menuName. '.&Names.' . letter . '.'
+			call add(menu, 'amenu '. s:menuName. '.&Names\ (' . totThemes . ').'
+					\. letter . '\ ('. numThemes .').'
 					\.  a:dicts[1][letter][theme] . '  :colo '. theme . '<CR>')
 		endfor
 	endfor
@@ -413,28 +416,31 @@ function! <SID>BuildMenu(dicts) "{{{1
 	call add(menu, 'endif')
 
 	return menu
-endfunction
+endfunction "}}}
 
-function! WriteColorSchemeMenu() "{{{1
+function! WriteColorSchemeMenu() "{{{
 	"Builds the menu from the two dicts returned by ScanThemeBackground()
 	"Stores menu in first plugin dir specified by &rtp
 	let menu = <SID>BuildMenu(<SID>ScanThemeBackground())
 	call writefile(menu, s:menuFile)
-endfunction
+endfunction "}}}
 
-function! InitMenu() "{{{1
+function! InitMenu() "{{{
 	call WriteColorSchemeMenu()
 	execute "source " . s:menuFile
-endfunction
+endfunction "}}}
+
+"}}}
+
 " Restore &cpo: {{{1
 let &cpo= s:keepcpo
 unlet s:keepcpo
 "}}}1
 
-"Detect absence of ColorScheme menu, and generates a new one automatically
-if !filereadable(s:menuFile)
+"Detect absence of ColorScheme menu, and generate a new one automatically
+if !filereadable(s:menuFile) "{{{
 	call InitMenu()
-endif
+endif "}}}
 
 "  vim: tabstop=4 foldmethod=marker
 
