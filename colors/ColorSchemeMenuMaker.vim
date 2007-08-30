@@ -2,14 +2,14 @@
 " 					upon background colors
 " Maintainer:		Erik Falor <rAjsBnFCybe@tzNnvy.Zpbz g?? - NOSPAM>
 " Date:				Aug 30, 2007
-" Version:			0.3
+" Version:			0.4
 "
 
 " Initialization: {{{
 if exists("g:loaded_theme_menu") || &cp
 	finish
 endif
-let g:loaded_theme_menu= "0.3"
+let g:loaded_theme_menu= "0.4"
 let s:keepcpo      = &cpo
 set cpo&vim
 "}}}
@@ -229,8 +229,10 @@ function! <SID>RgbTxt2Hexes() "{{{
 	else
 		if has("win32") || has("win64")
 			let rgbtxt = expand("$VIMRUNTIME/rgb.txt")
-		else
+		elseif filereadable("/usr/X11R6/lib/X11/rgb.txt")
 			let rgbtxt = "/usr/X11R6/lib/X11/rgb.txt"
+		elseif filereadable("/usr/share/X11/rgb.txt")
+			let rgbtxt = "/usr/share/X11/rgb.txt"
 		endif
 	endif
 	let rgbdict = {}
