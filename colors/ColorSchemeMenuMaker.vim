@@ -1,15 +1,15 @@
 " theme.menu.vim:	Generates Vim themes menu and organizes themes based
 " 					upon background colors
 " Maintainer:		Erik Falor <rAjsBnFCybe@tzNnvy.Zpbz g?? - NOSPAM>
-" Date:				Aug 29, 2007
-" Version:			0.2
+" Date:				Aug 30, 2007
+" Version:			0.3
 "
 
 " Initialization: {{{
 if exists("g:loaded_theme_menu") || &cp
 	finish
 endif
-let g:loaded_theme_menu= "0.1"
+let g:loaded_theme_menu= "0.3"
 let s:keepcpo      = &cpo
 set cpo&vim
 "}}}
@@ -224,15 +224,28 @@ endfunction "}}}
 
 function! <SID>RgbTxt2Hexes() "{{{
 	"read rgb.txt, return dictionary mapping color names to hex triplet
-	let rgbdict = {}
-	for line in readfile(expand("$VIMRUNTIME/rgb.txt"))
-		if line !~ '^\(!\|#\)'
-			let l = matchlist(line, '\s*\(\d\+\)\s*\(\d\+\)\s*\(\d\+\)\s*\(.*\)')
-			let rgbdict[tolower(l[4])] = printf("%02X%02X%02X", l[1], l[2], l[3])
+	if exists("g:rgbtxt") && filereadable(g:rgbtxt)
+		let rgbtxt = g:rgbtxt
+	else
+		if has("win32") || has("win64")
+			let rgbtxt = expand("$VIMRUNTIME/rgb.txt")
+		else
+			let rgbtxt = "/usr/X11R6/lib/X11/rgb.txt"
 		endif
-	endfor
-	"note: vim treats guibg=NONE as guibg=white
-	let rgbdict['none'] = 'FFFFFF'
+	endif
+	let rgbdict = {}
+	if filereadable(rgbtxt)
+		for line in readfile(rgbtxt)
+			if line !~ '^\(!\|#\)'
+				let l = matchlist(line, '\s*\(\d\+\)\s*\(\d\+\)\s*\(\d\+\)\s*\(.*\)')
+				let rgbdict[tolower(l[4])] = printf('%02X%02X%02X', l[1], l[2], l[3])
+			endif
+		endfor
+		"note: vim treats guibg=NONE as guibg=white
+		let rgbdict['none'] = 'FFFFFF'
+	else
+		echoerr "ColorSchemeMenuMaker.vim could not open rgb.txt file at " . rgbtxt 
+	endif
 	return rgbdict
 endfunction "}}}
 
@@ -308,7 +321,11 @@ function! <SID>ScanThemeBackground() "{{{
 					if bg[1] == '#'
 						let color = <SID>RGB2BoyColor(bg[2])
 					else
-						let color = <SID>RGB2BoyColor(name2hex[tolower(bg[2])])
+						if has_key(name2hex, tolower(bg[2]))
+							let color = <SID>RGB2BoyColor(name2hex[tolower(bg[2])])
+						else
+							let color = 'unknown'
+						endif
 					endif
 					let higroupfound += 1
 				endif
@@ -317,7 +334,7 @@ function! <SID>ScanThemeBackground() "{{{
 			let letter = toupper(strpart(themename, 0, 1))
 			if letter =~ '\d' | let letter = '#' | endif
 
-			if len(color) < 1
+			if len(color) < 1 
 				let color = 'unknown'
 			endif
 
@@ -425,7 +442,7 @@ function! WriteColorSchemeMenu() "{{{
 	call writefile(menu, s:menuFile)
 endfunction "}}}
 
-function! InitMenu() "{{{
+function! <SID>InitMenu() "{{{
 	call WriteColorSchemeMenu()
 	execute "source " . s:menuFile
 endfunction "}}}
@@ -439,8 +456,9 @@ unlet s:keepcpo
 
 "Detect absence of ColorScheme menu, and generate a new one automatically
 if !filereadable(s:menuFile) "{{{
-	call InitMenu()
+	echomsg "Creating ColorScheme menu - Please Wait..."
+	call <SID>InitMenu()
+	echomsg "Done!"
 endif "}}}
 
 "  vim: tabstop=4 foldmethod=marker
-
