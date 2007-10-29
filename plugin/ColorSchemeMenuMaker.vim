@@ -6,12 +6,12 @@
 " License:			If you copy this, just give me props.
 "
 " History:
-"   Version 0.9:	Tries not to create submenus which are too tall to fit
-"					on the screen.  By default, generated submenus are split
-"					so as to contain fewer than 45 items.  This number may be
-"					overridden via g:MaxEntriesPerSubmenu.
+"   Version 0.10:	Will not create submenus which are too tall to fit
+"   				on the screen.  By default, generated submenus are
+"   				split so as to contain fewer than 45 items.  This
+"   				number may be overridden via g:MaxEntriesPerSubmenu.
 "
-"   Version 0.8.1:	Shuangshi Jie bugfix: changed to Unix line endings.
+"   Version 0.9:	Shuangshi Jie bugfix: changed to Unix line endings.
 "
 "   Version 0.8:	Avoid loading menu in console mode.
 "
