@@ -3,11 +3,14 @@
 " colorscheme name.
 
 " Maintainer:       Erik Falor <ewfalor@gmail.com>
-" Date:             Mar 27, 2008
-" Version:          1.0
+" Date:             Jan 15, 2009
+" Version:          1.0.1
 " License:          Vim License
 "
 " History: {{{
+"   Version 1.0.1:  Fixed bug when rebuilding menu more than once and the
+"                   number of colorschemes contained in the menu changes.
+"
 "   Version 1.0:    No reported problems for quite a while; I feel this
 "                   plugin is no longer beta-quality.
 "                   ReloadColorsMenu and RebuildColorsMenu commands will
@@ -329,6 +332,7 @@ endfunction "}}}
 
 function! <SID>FindRgbTxt() "{{{
     "read rgb.txt, return dictionary mapping color names to hex triplet
+    let rgbtxt = ''
     if exists("g:rgbtxt") && filereadable(g:rgbtxt)
         let rgbtxt = g:rgbtxt
     else
@@ -608,11 +612,13 @@ function! <SID>BuildMenu(dicts) "{{{
     call add(menu, 'command! -nargs=0       ReloadColorsMenu        call <SID>ReloadColorsMenu()')
     call add(menu, 'command! -nargs=0       RebuildColorsMenu       call <SID>RebuildColorsMenu()')
     call add(menu, '')
+    call add(menu, 'let s:totThemes = ' . totThemes )
+    call add(menu, '')
     call add(menu, 'if !exists("g:running_ReloadColorsMenu")')
     call add(menu, '    function! <SID>ReloadColorsMenu()')
     call add(menu, '        let g:running_ReloadColorsMenu = 1')
-    call add(menu, '        aunmenu ' . s:menuName . '.&Colors\ (' . totThemes . ')')
-    call add(menu, '        aunmenu ' . s:menuName . '.&Names\ (' . totThemes . ')')
+    call add(menu, '        execute "aunmenu ' . s:menuName . '.&Colors\\ (" . s:totThemes . ")"')
+    call add(menu, '        execute "aunmenu ' . s:menuName . '.&Names\\ (" . s:totThemes  . ")"')
     call add(menu, '        aunmenu ' . s:menuName . '.-Sep-')
     call add(menu, '        aunmenu ' . s:menuName . '.Reload\ Menu')
     call add(menu, '        aunmenu ' . s:menuName . '.Rebuild\ Menu')
