@@ -3,11 +3,13 @@
 " colorscheme name.
 
 " Maintainer:       Erik Falor <ewfalor@gmail.com>
-" Date:             Jan 15, 2009
-" Version:          1.0.1
+" Date:             Mar 21, 2012
+" Version:          1.0.2
 " License:          Vim License
 "
 " History: {{{
+"   Version 1.0.2:  Adjust lookup path for rgb.txt.
+"
 "   Version 1.0.1:  Fixed bug when rebuilding menu more than once and the
 "                   number of colorschemes contained in the menu changes.
 "
@@ -105,7 +107,7 @@
 if exists("g:loaded_theme_menu") && !exists("g:ColorSchemeSDKMode")
     finish
 endif
-let g:loaded_theme_menu= "0.10"
+let g:loaded_theme_menu= "1.0.2"
 let s:keepcpo      = &cpo
 set cpo&vim
 "}}}
@@ -336,7 +338,7 @@ function! <SID>FindRgbTxt() "{{{
     if exists("g:rgbtxt") && filereadable(g:rgbtxt)
         let rgbtxt = g:rgbtxt
     else
-        if has("win32") || has("win64")
+        if filereadable(expand("$VIMRUNTIME/rgb.txt"))
             let rgbtxt = expand("$VIMRUNTIME/rgb.txt")
         elseif filereadable("/usr/X11R6/lib/X11/rgb.txt")
             let rgbtxt = "/usr/X11R6/lib/X11/rgb.txt"
