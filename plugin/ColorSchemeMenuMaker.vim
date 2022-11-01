@@ -312,7 +312,7 @@ function! <SID>IsMagenta(r, g, b, h, s, v) "{{{
     else 
         return 0
     endif
-endfunction }}}
+endfunction "}}}
 
 function! <SID>IsOrange(r, g, b, h, s, v) "{{{
     "a magic number found through trial and error
@@ -742,7 +742,7 @@ unlet s:keepcpo
 "}}}1
 
 "Detect absence of ColorScheme menu, and generate a new one automatically
-if has("gui_running") && !filereadable(s:menuFile) "{{{
+if (has("gui_running") && !filereadable(s:menuFile)) "{{{
     echomsg "Creating ColorScheme menu - Please Wait..."
     call <SID>InitMenu()
     echomsg "Done!"
